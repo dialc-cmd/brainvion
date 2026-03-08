@@ -1,46 +1,45 @@
 # Security Policy
 
-## Supported Versions
+## 🛡️ Architecture & Threat Matrix
 
-BrainVION is currently in early development (MVP stage). 
-Security updates will be applied to the latest version of the platform.
+BrainVION is currently in its Minimal Viable Product (MVP) stage. By design, the application prioritizes security through minimal attack surfaces:
 
----
+- **No Backend Server:** The application is statically generated via Next.js (SSG) and hosted on Vercel.
+- **No Database / Authentication:** There are no user accounts, passwords, or session tokens stored on the platform.
+- **No Payment Processors:** Financial transactions are not handled on the website.
+- **Data Handling:** All sensitive data intake (Student House applications) is completely offloaded to external Google Forms.
 
-## Reporting a Vulnerability
-
-If you discover a security vulnerability in the BrainVION project, please report it privately.
-
-Please DO NOT open a public GitHub issue for security problems.
-
-Instead, report it via email:
-
-brainvion.community@gmail.com
+Consequently, traditional vulnerabilities (SQL injection, XSS session hijacking, CSRF) pose minimal to zero risk initially.
 
 ---
 
-## What to Include in Your Report
+## 📦 Supported Versions
 
-Please include the following information:
+Security updates and dependency audits will be applied exclusively to the `main` branch deployed to production. 
 
-• Description of the vulnerability  
-• Steps to reproduce the issue  
-• Possible impact  
-• Any suggested fixes (if available)
+---
+
+## 🚨 Reporting a Vulnerability
+
+If you discover a security vulnerability—such as an exposed API key in the source code, a supply chain vulnerability in a dependency (e.g., Next.js, Tailwind), or an issue with the Service Worker caching mechanism—please report it privately.
+
+**Please DO NOT open a public GitHub issue for security problems.**
+
+Instead, report it directly via email:
+✉️ **brainvion.community@gmail.com**
+
+Please include:
+- Description of the vulnerability.
+- Steps to reproduce.
+- Potential impact on the static frontend.
 
 ---
 
 ## Response Process
 
 The BrainVION maintainers will:
+1. Acknowledge receipt of the report.
+2. Investigate the supply-chain or frontend issue.
+3. Apply a fix and redeploy the static bundle.
 
-1. Acknowledge receipt of the report  
-2. Investigate the issue  
-3. Apply a fix if necessary  
-4. Release an update  
-
-We appreciate responsible disclosure and the efforts of contributors who help improve the project's security.
-
----
-
-Thank you for helping keep BrainVION secure.
+Thank you for helping keep BrainVION secure and reliable for students.
