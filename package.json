@@ -24,12 +24,21 @@
   },
   "homepage": "https://github.com/dialc-cmd/brainvion#readme",
   "dependencies": {
+    "@langchain/core": "^1.1.31",
+    "@langchain/langgraph": "^1.2.1",
+    "@langchain/openai": "^1.2.12",
+    "@monaco-editor/react": "^4.7.0",
     "@serwist/next": "^9.5.6",
+    "ai": "^6.0.116",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.35.1",
     "lucide-react": "^0.577.0",
     "next": "^16.1.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "serwist": "^9.5.6"
+    "recharts": "^3.8.0",
+    "serwist": "^9.5.6",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.1",

@@ -14,94 +14,112 @@
  */
 
 import Head from 'next/head';
-import { LINKS } from '@/lib/constants';
-import { Facebook, MessageCircle, Mail, MapPin } from 'lucide-react';
+import { Mail, MessageCircle, MapPin, Facebook } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
 
-// Community REQUIREMENT [Brainvion]: [A dedicated contact page displaying social links and Whatsapp number clearly.]
-// TECHNICAL IMPLEMENTATION: [Static layout mapping connection constants to interactive cards.]
-// QA/QC ADVISORY: [Clickability of entire cards and hover states must guide user correctly to respective apps.]
+// Community REQUIREMENT [Brainvion]: [Direct and immediate contact avenues. Since MVP has no backend, social redirects are heavily utilized.]
+// TECHNICAL IMPLEMENTATION: [Framer Motion for card scale on hover. Specific brand colors utilized for massive CTA interactive buttons.]
+// QA/QC ADVISORY: [Ensure `href` links correctly target blank pages where appropriate to avoid losing session state.]
+
+const fadeUp: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
 
 export default function Contact() {
     return (
         <>
             <Head>
-                <title>Contact Us | BrainVION</title>
-                <meta name="description" content="Get in touch with the BrainVION team via WhatsApp, Facebook, or Email." />
+                <title>Contact | BrainVION</title>
+                <meta name="description" content="Get in touch with the BrainVION community leaders." />
             </Head>
 
-            <div className="bg-secondary min-h-[calc(100vh-4rem)] py-16 sm:py-24">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white min-h-[90vh] py-20 lg:py-32 relative overflow-hidden">
+                {/* Visual Graphic */}
+                <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-secondary/50 to-transparent pointer-events-none transform skew-x-12 translate-x-32" />
 
-                    <div className="text-center mb-16">
-                        <h1 className="text-4xl md:text-5xl font-bold font-heading text-primary mb-4">
-                            Get in Touch
-                        </h1>
-                        <p className="text-lg text-text/70 max-w-2xl mx-auto">
-                            Have questions about the community, looking for a seat in the student house, or want to partner with us? Reach out.
-                        </p>
-                    </div>
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                            hidden: { opacity: 0 },
+                            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                        }}
+                        className="text-center md:text-left mb-16"
+                    >
+                        <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-bold font-heading text-primary mb-6">
+                            Let's Connect.
+                        </motion.h1>
+                        <motion.p variants={fadeUp} className="text-xl md:text-2xl text-text/70 max-w-2xl leading-relaxed">
+                            Have questions about the Student House, tech meetups, or community projects? Reach out directly.
+                        </motion.p>
+                    </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                        {/* WhatsApp */}
-                        <a
-                            href={LINKS.whatsapp}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                        {/* WhatsApp Card */}
+                        <motion.a
+                            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                            href="https://wa.me/8801700000000" // Replace with real 
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group flex items-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-accent/40 transition-all text-left"
+                            className="bg-white border-2 border-green-100 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:border-green-400 transition-all group flex items-start gap-6"
                         >
-                            <div className="h-14 w-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-6 group-hover:scale-110 transition-transform">
-                                <MessageCircle className="w-7 h-7" />
+                            <div className="w-16 h-16 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-green-500 group-hover:text-white transition-all">
+                                <MessageCircle className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold font-heading text-primary group-hover:text-accent transition-colors">WhatsApp</h3>
-                                <p className="text-text/60 mt-1">Fastest way to reach us</p>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">WhatsApp</h3>
+                                <p className="text-gray-500 text-lg">Fastest way to reach the community admins directly.</p>
                             </div>
-                        </a>
+                        </motion.a>
 
-                        {/* Facebook */}
-                        <a
-                            href={LINKS.facebook}
+                        {/* Facebook Group Card */}
+                        <motion.a
+                            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                            href="https://facebook.com/groups/brainvion" // Replace with real
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group flex items-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-300 transition-all text-left"
+                            className="bg-white border-2 border-blue-100 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:border-blue-500 transition-all group flex items-start gap-6"
                         >
-                            <div className="h-14 w-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-6 group-hover:scale-110 transition-transform">
-                                <Facebook className="w-7 h-7" />
+                            <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                <Facebook className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold font-heading text-primary group-hover:text-blue-600 transition-colors">Facebook Page</h3>
-                                <p className="text-text/60 mt-1">Updates & Community</p>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Facebook Group</h3>
+                                <p className="text-gray-500 text-lg">Join discussions, see meetup photos, and participate in polls.</p>
                             </div>
-                        </a>
+                        </motion.a>
 
-                        {/* Email */}
-                        <a
-                            href={LINKS.email}
-                            className="group flex items-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-300 transition-all text-left"
+                        {/* Email Card */}
+                        <motion.a
+                            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                            href="mailto:brainvion.community@gmail.com"
+                            className="bg-white border-2 border-gray-100 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:border-gray-800 transition-all group flex items-start gap-6"
                         >
-                            <div className="h-14 w-14 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mr-6 group-hover:scale-110 transition-transform">
-                                <Mail className="w-7 h-7" />
+                            <div className="w-16 h-16 bg-gray-50 text-gray-700 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <Mail className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold font-heading text-primary">Email Us</h3>
-                                <p className="text-text/60 mt-1">For official queries</p>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Email Us</h3>
+                                <p className="text-gray-500 text-lg">brainvion.community@gmail.com</p>
                             </div>
-                        </a>
+                        </motion.a>
 
-                        {/* Location */}
-                        <div className="flex items-center p-6 bg-primary text-secondary rounded-2xl shadow-sm text-left">
-                            <div className="h-14 w-14 rounded-full bg-secondary/10 flex items-center justify-center mr-6">
-                                <MapPin className="w-7 h-7 text-accent" />
+                        {/* Location Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+                            className="bg-white border-2 border-accent/20 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:border-accent transition-all group flex items-start gap-6"
+                        >
+                            <div className="w-16 h-16 bg-accent/10 text-accent rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <MapPin className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold font-heading text-white">Location</h3>
-                                <p className="text-secondary/80 mt-1 text-sm">Shukrabad (Near Dhanmondi)<br />Dhaka, Bangladesh</p>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Physical Hub</h3>
+                                <p className="text-gray-500 text-lg">Shukrabad, Near Dhanmondi 32<br />Dhaka, Bangladesh</p>
                             </div>
-                        </div>
-
+                        </motion.div>
                     </div>
-
                 </div>
             </div>
         </>
