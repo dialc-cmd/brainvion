@@ -214,12 +214,12 @@ export default function Home() {
                                     Find a Seat
                                 </Link>
                             </motion.div>
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+                            {/* <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
                                 <Link href="/register" className="block w-full sm:w-auto px-8 py-4 bg-purple-600 text-white hover:bg-purple-500 font-semibold rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 flex items-center justify-center gap-2">
                                     <Sparkles className="w-4 h-4 ml-[-4px]" />
                                     Enter Lab
                                 </Link>
-                            </motion.div>
+                            </motion.div> */}
                         </motion.div>
                     </motion.div>
                 </div>

@@ -29,8 +29,8 @@ const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Community', path: '/community' },
     { name: 'Learning Hub', path: '/learning' },
-    { name: 'Student House', path: '/house' },
-    { name: 'Agentic Labs', path: '/register' },
+    // { name: 'Student House', path: '/house' },
+    // { name: 'Agentic Labs', path: '/register' },
     { name: 'Contact', path: '/contact' },
 ];
 

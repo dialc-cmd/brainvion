@@ -48,11 +48,11 @@ export default function Footer() {
                                     Community Vision
                                 </Link>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link href="/learning" className="hover:text-accent transition-colors">
                                     Learning Hub
                                 </Link>
-                            </li>
+                            </li> */}
                             <li>
                                 <Link href="/house" className="hover:text-accent transition-colors">
                                     Student House
