@@ -11,12 +11,12 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight, Phone } from 'lucide-react';
 import { useSignup } from '@/hooks/useSignup';
 
-// 1. Context: Dumb UI component rendering the client/customer signup form.
-// 2. Algorithm/Logic: Takes no props, consumes the useSignup hook for state and submission handlers.
-// 3. Junior Engineer Guidance: Keep UI components stateless where possible. All business logic lives in useSignup.ts.
+// [Why this exists]: Dumb UI component rendering the client/customer signup form.
+// [Algorithm/Logic]: Takes no props, consumes the useSignup hook for state and submission handlers.
+// [Junior Engineer Guidance]: Keep UI components stateless where possible. All business logic lives in useSignup.ts.
 
 export function ClientSignupForm() {
-    const { isLoading, error, handleSignup } = useSignup();
+    const { isLoading, error, success, handleSignup } = useSignup();
 
     return (
         <div className="bg-white shadow-xl sm:rounded-2xl border border-gray-100 relative overflow-hidden" style={{ padding: 'var(--spacing-phi-2)' }}>
@@ -30,6 +30,16 @@ export function ClientSignupForm() {
                     className="mb-6 p-3 bg-rose-50 border border-rose-200 rounded-lg text-sm text-rose-700"
                 >
                     {error}
+                </motion.div>
+            )}
+
+            {success && (
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-6 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700"
+                >
+                    {success}
                 </motion.div>
             )}
 

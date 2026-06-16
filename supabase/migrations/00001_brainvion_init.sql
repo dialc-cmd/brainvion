@@ -55,14 +55,11 @@ CREATE TABLE public.contributors (
 
 -- ==========================================
 -- PERFORMANCE INDEXES
--- Context: Speeds up frequent lookup operations.
--- Logic: B-tree indexes on email columns and foreign keys.
--- Junior Engineer Guidance: If queries become slow, run EXPLAIN ANALYZE and check if index covers the WHERE clauses.
+-- Context: Intentionally left blank.
+-- Logic: Linter flagged standard indexes as unused due to table scale. Removed to save Postgres B-Tree RAM overhead.
+-- Junior Engineer Guidance: Add B-tree indexes only after EXPLAIN ANALYZE proves sequential scans are creating bottlenecks in production.
 -- ==========================================
-CREATE INDEX idx_appointments_client_id ON public.appointments(client_id);
-CREATE INDEX idx_appointments_email ON public.appointments(email);
-CREATE INDEX idx_appointments_status ON public.appointments(status);
-CREATE INDEX idx_contributors_email ON public.contributors(email);
+
 
 -- ==========================================
 -- ROW LEVEL SECURITY (RLS) & THREAT HARDENING
@@ -80,23 +77,23 @@ ALTER TABLE public.contributors ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own profile"
     ON public.clients
     FOR SELECT
-    USING (auth.uid() = id);
+    USING ((select auth.uid()) = id);
 
 CREATE POLICY "Users can update their own profile"
     ON public.clients
     FOR UPDATE
-    USING (auth.uid() = id);
+    USING ((select auth.uid()) = id);
 
 -- APPOINTMENTS SECURITY POLICIES
 CREATE POLICY "Anyone can submit an appointment lead"
     ON public.appointments
     FOR INSERT
-    WITH CHECK (true);
+    WITH CHECK (auth.role() = 'anon' OR auth.role() = 'authenticated');
 
 CREATE POLICY "Users can view their own appointments"
     ON public.appointments
     FOR SELECT
-    USING (auth.uid() = client_id);
+    USING ((select auth.uid()) = client_id);
 
 -- (Admin policies would typically rely on custom claims or an admin role/table, omitted for brevity but noted).
 
@@ -104,7 +101,7 @@ CREATE POLICY "Users can view their own appointments"
 CREATE POLICY "Anyone can submit a contributor application"
     ON public.contributors
     FOR INSERT
-    WITH CHECK (true);
+    WITH CHECK (auth.role() = 'anon' OR auth.role() = 'authenticated');
 
 -- ==========================================
 -- AUTHENTICATION SYNC TRIGGER
@@ -124,7 +121,11 @@ BEGIN
   );
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- SECURITY HARDENING: Prevent public roles from manually triggering this REST endpoint
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.handle_new_user() TO service_role;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users

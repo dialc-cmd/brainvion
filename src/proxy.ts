@@ -11,7 +11,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // REQUIRED FEATURES: Semantic Agent-Responsive Routing & i18n Readiness
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Ignore static assets and API routes

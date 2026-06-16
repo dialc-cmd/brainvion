@@ -1,28 +1,52 @@
 import Head from 'next/head';
 import { motion } from 'framer-motion';
-import { GraduationCap, Users, BookOpen, Calendar, Bed } from 'lucide-react';
+import { BookOpen, Calendar, Code, ExternalLink, Download, UserCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
+import { supabase } from '@/lib/supabase';
 
-// Community REQUIREMENT [Brainvion]: [Community dashboard for students and members.]
-// TECHNICAL IMPLEMENTATION: [Static mockup of community features protected by client-side auth check.]
-// QA/QC ADVISORY: [Ensure route is protected and unauthorized users are redirected.]
+interface Contributor {
+    full_name: string;
+    contribution_area: string;
+    skills: string;
+    portfolio_url: string | null;
+    cv_url: string | null;
+}
 
 export default function CommunityDashboard() {
     const router = useRouter();
     const [isAuthorized, setIsAuthorized] = useState(false);
+    const [profile, setProfile] = useState<Contributor | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const role = Cookies.get('brainvion_role');
-        if (role !== 'contributor') {
-            router.replace('/login');
-        } else {
+        const fetchUserData = async () => {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            
+            if (error || !user) {
+                router.replace('/login');
+                return;
+            }
+
             setIsAuthorized(true);
-        }
+
+            // Fetch contributor profile securely via email match
+            const { data: profileData } = await supabase
+                .from('contributors')
+                .select('full_name, contribution_area, skills, portfolio_url, cv_url')
+                .eq('email', user.email)
+                .maybeSingle();
+
+            if (profileData) {
+                setProfile(profileData);
+            }
+            setIsLoading(false);
+        };
+
+        fetchUserData();
     }, [router]);
 
-    if (!isAuthorized) return null; // Prevent flash of content
+    if (!isAuthorized || isLoading) return null; // Prevent flash of content
 
     return (
         <>
@@ -39,36 +63,70 @@ export default function CommunityDashboard() {
                         transition={{ duration: 0.5 }}
                         className="mb-8"
                     >
-                        <h1 className="text-3xl font-bold text-primary font-heading">Welcome, Student</h1>
-                        <p className="text-gray-600 mt-2">Here's your community overview and active resources.</p>
+                        <h1 className="text-3xl font-bold text-primary font-heading">
+                            Welcome, {profile?.full_name || 'Builder'}
+                        </h1>
+                        <p className="text-gray-600 mt-2">Here is your active BrainVION ecosystem profile.</p>
                     </motion.div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         
-                        {/* Student House Status */}
+                        {/* Contributor Profile Snapshot */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.1 }}
                             className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
                         >
-                            <div className="flex items-center gap-4 mb-4">
+                            <div className="flex items-center gap-4 mb-6">
                                 <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                                    <Bed className="w-6 h-6" />
+                                    <UserCircle className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-900">Housing Status</h3>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900">Your Identity</h3>
+                                    <p className="text-sm text-gray-500 capitalize">{profile?.contribution_area?.replace('_', ' ') || 'New Member'}</p>
+                                </div>
                             </div>
-                            <div className="mb-4">
-                                <p className="text-sm text-gray-500 mb-1">Current Residence</p>
-                                <p className="font-medium text-gray-900">Shukrabad Hub, Room 302</p>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '45%' }}></div>
-                            </div>
-                            <p className="text-xs text-gray-500">Rent due in 15 days</p>
+                            
+                            {profile ? (
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">Declared Skills</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {profile.skills?.split(',').slice(0, 3).map((skill, idx) => (
+                                                <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium">
+                                                    {skill.trim()}
+                                                </span>
+                                            ))}
+                                            {profile.skills?.split(',').length > 3 && (
+                                                <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium">...</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="pt-4 border-t border-gray-100 flex gap-3">
+                                        {profile.portfolio_url && (
+                                            <a href={profile.portfolio_url} target="_blank" rel="noreferrer" className="flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                                                <ExternalLink className="w-4 h-4 mr-2" />
+                                                Portfolio
+                                            </a>
+                                        )}
+                                        {profile.cv_url && (
+                                            <a href={profile.cv_url} target="_blank" rel="noreferrer" className="flex-1 inline-flex justify-center items-center px-3 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors">
+                                                <Download className="w-4 h-4 mr-2" />
+                                                View CV
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-sm text-gray-500">
+                                    Please submit a Community Join Form to complete your profile!
+                                </div>
+                            )}
                         </motion.div>
 
-                        {/* Learning Hub Progress */}
+                        {/* Learning Hub Progress (Static/Placeholder for future) */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -81,14 +139,11 @@ export default function CommunityDashboard() {
                                 </div>
                                 <h3 className="text-lg font-semibold text-gray-900">Learning Progress</h3>
                             </div>
-                            <ul className="space-y-3">
+                            <p className="text-sm text-gray-500 mb-4">Coming soon! Your course tracks will appear here once the curriculum engine goes live.</p>
+                            <ul className="space-y-3 opacity-50 select-none">
                                 <li className="flex justify-between items-center text-sm">
                                     <span className="text-gray-600">Frontend Roadmap</span>
                                     <span className="font-semibold text-green-600">80%</span>
-                                </li>
-                                <li className="flex justify-between items-center text-sm">
-                                    <span className="text-gray-600">IELTS Preparation</span>
-                                    <span className="font-semibold text-green-600">30%</span>
                                 </li>
                             </ul>
                         </motion.div>
@@ -104,7 +159,7 @@ export default function CommunityDashboard() {
                                 <div className="p-3 bg-purple-50 text-purple-600 rounded-lg">
                                     <Calendar className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-900">Events</h3>
+                                <h3 className="text-lg font-semibold text-gray-900">Ecosystem Events</h3>
                             </div>
                             <div className="space-y-4">
                                 <div className="border-l-4 border-purple-500 pl-3 py-1">
@@ -112,8 +167,8 @@ export default function CommunityDashboard() {
                                     <p className="text-xs text-gray-500">Tomorrow, 6:00 PM</p>
                                 </div>
                                 <div className="border-l-4 border-gray-300 pl-3 py-1">
-                                    <p className="text-sm font-semibold text-gray-900">Community Dinner</p>
-                                    <p className="text-xs text-gray-500">Friday, 8:00 PM</p>
+                                    <p className="text-sm font-semibold text-gray-900">Community Hackathon</p>
+                                    <p className="text-xs text-gray-500">Next Friday, 8:00 AM</p>
                                 </div>
                             </div>
                         </motion.div>

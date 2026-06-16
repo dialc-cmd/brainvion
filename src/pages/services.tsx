@@ -14,8 +14,13 @@ import Head from 'next/head';
 import { motion, Variants } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import ServiceGigCard from '@/components/cards/ServiceGigCard';
-import AppointmentModal from '@/components/modals/AppointmentModal';
+import dynamic from 'next/dynamic';
 import { TECH_SERVICES } from '@/data/services';
+
+// Dynamically import the heavy AppointmentModal to save memory and reduce initial JS bundle
+const AppointmentModal = dynamic(() => import('@/components/modals/AppointmentModal'), {
+    ssr: false, // Don't render on server to save memory
+});
 import type { ServiceSlug } from '@/lib/types';
 
 // Community REQUIREMENT [Brainvion]: [A premium 5-grid services marketplace that drives B2B/B2C lead capture through contextual appointment booking.]

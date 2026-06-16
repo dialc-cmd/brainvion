@@ -5,9 +5,9 @@
  * @license Proprietary - All Rights Reserved.
  */
 
-// 1. Context: Centralized placeholder for the future backend API client (e.g., Axios or Fetch wrappers).
-// 2. Algorithm/Logic: Exposes basic fetch utility methods configured with the base API URL and standard headers.
-// 3. Junior Engineer Guidance: When integrating Supabase or Express, replace these stubs with actual implementations. Do not embed fetch logic inside components.
+// [Why this exists]: Centralized placeholder for the future backend API client (e.g., Axios or Fetch wrappers).
+// [Algorithm/Logic]: Exposes basic fetch utility methods configured with the base API URL and standard headers.
+// [Junior Engineer Guidance]: When integrating Supabase or Express, replace these stubs with actual implementations. Do not embed fetch logic inside components.
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
@@ -18,7 +18,7 @@ export const apiClient = {
         return null;
     },
 
-    async post(endpoint: string, data: any) {
+    async post<T = unknown>(endpoint: string, data: Record<string, unknown> | T) {
         // Placeholder for POST request logic
         console.log(`[API POST]: ${API_BASE_URL}${endpoint}`, data);
         return null;

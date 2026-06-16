@@ -20,11 +20,13 @@ export function useSignup() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
     const handleSignup = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError(null);
+        setSuccess(null);
 
         const form = e.target as HTMLFormElement;
         const fullName = (form.elements.namedItem('name') as HTMLInputElement).value;
@@ -53,15 +55,12 @@ export function useSignup() {
             // Success: trigger global auth change event
             window.dispatchEvent(new Event('auth-change'));
             
+            setSuccess('Account created successfully! Redirecting to dashboard...');
+            
             // 7-second auto-redirect sequence to the Learning Hub
             setTimeout(() => {
                 router.push('/learning');
             }, 7000);
-
-            // Give immediate feedback to user that it was successful but they will be redirected
-            // We can repurpose the error state as a success message block if we want, but typically 
-            // the UI will show a success state or just stay disabled until redirect.
-            
         } catch (err) {
             setError('Network error. Please check your connection.');
             setIsLoading(false);
@@ -71,6 +70,7 @@ export function useSignup() {
     return {
         isLoading,
         error,
+        success,
         handleSignup
     };
 }

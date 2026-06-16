@@ -36,6 +36,7 @@ import { supabase } from '@/lib/supabase';
 export default function ContributorJoinForm({ onClose }: { onClose: () => void }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [cvFile, setCvFile] = useState<File | null>(null);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -43,12 +44,37 @@ export default function ContributorJoinForm({ onClose }: { onClose: () => void }
         const formData = new FormData(e.currentTarget);
         
         try {
+            let cv_url = null;
+
+            if (cvFile) {
+                const fileExt = cvFile.name.split('.').pop();
+                const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+                
+                const { error: uploadError } = await supabase.storage
+                    .from('resumes')
+                    .upload(fileName, cvFile);
+
+                if (uploadError) throw new Error(`CV Upload failed: ${uploadError.message}`);
+
+                const { data } = supabase.storage.from('resumes').getPublicUrl(fileName);
+                cv_url = data.publicUrl;
+            }
+
             const { error } = await supabase.from('contributors').insert({
                 full_name: formData.get('name') as string,
                 email: formData.get('email') as string,
                 portfolio_url: formData.get('portfolioUrl') as string || null,
                 contribution_area: formData.get('contributionArea') as string,
-                home_country: formData.get('homeCountry') as string
+                home_country: formData.get('homeCountry') as string,
+                github_url: formData.get('github') as string || null,
+                linkedin_url: formData.get('linkedin') as string || null,
+                discord_username: formData.get('discord') as string || null,
+                education: formData.get('education') as string,
+                skills: formData.get('skills') as string,
+                goals: formData.get('goal') as string,
+                how_to_contribute: formData.get('contribution') as string,
+                source: formData.get('source') as string,
+                cv_url: cv_url
             });
 
             if (!error) {
@@ -174,11 +200,22 @@ export default function ContributorJoinForm({ onClose }: { onClose: () => void }
 
                 <div>
                     <label className="block text-sm font-medium text-text mb-2">Upload CV / Resume</label>
-                    <div className="border-2 border-dashed border-gray-200 hover:border-primary/40 rounded-xl p-6 text-center transition-colors bg-gray-50 cursor-pointer group">
+                    <label className="block border-2 border-dashed border-gray-200 hover:border-primary/40 rounded-xl p-6 text-center transition-colors bg-gray-50 cursor-pointer group">
                         <Upload className="w-8 h-8 text-gray-300 group-hover:text-primary/50 mx-auto mb-2 transition-colors" />
-                        <p className="text-sm text-text/60">PDF, DOC up to 10MB</p>
-                        <input type="file" accept=".pdf,.doc,.docx" className="hidden" />
-                    </div>
+                        <p className="text-sm text-text/60">
+                            {cvFile ? <span className="text-primary font-medium">{cvFile.name}</span> : 'PDF, DOC up to 10MB'}
+                        </p>
+                        <input 
+                            type="file" 
+                            accept=".pdf,.doc,.docx" 
+                            className="hidden" 
+                            onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                    setCvFile(e.target.files[0]);
+                                }
+                            }}
+                        />
+                    </label>
                 </div>
 
                 <button type="submit" disabled={isLoading} className="w-full flex justify-center items-center py-4 border-transparent rounded-2xl bg-primary text-secondary font-bold text-base hover:bg-primary/90 shadow-lg transition-all disabled:opacity-50 active:scale-[0.99]">
