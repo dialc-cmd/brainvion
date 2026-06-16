@@ -9,19 +9,20 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Define the environment variables securely
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Define the environment variables securely with mock fallbacks for build-time compilation
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
 /**
  * Context: Validates the presence of Supabase initialization assets in the runtime space.
- * Logic: Explicitly throws compile/runtime errors if variables are missing.
- * Junior Engineer Guidance: If this throws locally, ensure your `.env.local` contains the Netlify-issued Supabase variables.
+ * Logic: Logs a warning instead of throwing a fatal build-blocking error if variables are missing.
+ * Junior Engineer Guidance: Ensure your local `.env.local` or Netlify Build Environment variables contains the actual Supabase keys.
  */
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    "FATAL ERROR: Missing Next.js environment variables for Supabase initialization. " +
-    "Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  console.warn(
+    "WARNING: Missing Next.js environment variables for Supabase initialization. " +
+    "Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY. " +
+    "Fallback placeholder values are being used for compilation/static generation."
   );
 }
 
