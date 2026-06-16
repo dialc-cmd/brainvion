@@ -35,10 +35,15 @@ export function useSignup() {
         const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
         try {
+            const redirectTo = typeof window !== 'undefined'
+                ? `${window.location.origin}/login`
+                : undefined;
+
             const { data, error: authError } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
+                    emailRedirectTo: redirectTo,
                     data: {
                         full_name: fullName,
                         phone_no: phone
