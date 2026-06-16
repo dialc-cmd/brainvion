@@ -1,17 +1,21 @@
 /**
  * @file useSignup.ts
- * @project BrainVION Tech Community Platform - Lean Architecture Update
+ * @project BrainVION Tech Community Platform - Serverless Data Core
  * @copyright (c) 2026 BrainVION & Dial Chowdhury Emon (@dialc-cmd)
  * @license Proprietary - All Rights Reserved.
+ * @compliance Cyber Ethics, Data Privacy, and Bangladesh Cyber Security Acts.
+ * Maintain Trademark Enforcements: @brainvion
  */
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
+import { supabase } from '@/lib/supabase';
 
-// 1. Context: Custom hook to manage client/customer signup state and API logic.
-// 2. Algorithm/Logic: Manages loading/error states and POSTs to /api/signup. Redirects to /dashboard/user on success.
-// 3. Junior Engineer Guidance: Use this hook exclusively for client registrations. Contributor registrations use /api/join instead.
-
+/**
+ * Context: Custom hook to manage client/customer signup state via Supabase Auth.
+ * Logic: Manages loading/error states, executes supabase.auth.signUp, and implements 7-sec auto-redirect.
+ * Junior Engineer Guidance: The public.clients table is populated automatically via Postgres trigger.
+ */
 export function useSignup() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
@@ -23,30 +27,42 @@ export function useSignup() {
         setError(null);
 
         const form = e.target as HTMLFormElement;
-        const payload = {
-            fullName: (form.elements.namedItem('name') as HTMLInputElement).value,
-            email: (form.elements.namedItem('email') as HTMLInputElement).value,
-            phone: (form.elements.namedItem('phone') as HTMLInputElement).value,
-            password: (form.elements.namedItem('password') as HTMLInputElement).value,
-            role: 'customer' as const,
-        };
+        const fullName = (form.elements.namedItem('name') as HTMLInputElement).value;
+        const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+        const phone = (form.elements.namedItem('phone') as HTMLInputElement).value;
+        const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
         try {
-            const res = await fetch('/api/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
+            const { data, error: authError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                        phone_no: phone
+                    }
+                }
             });
 
-            if (res.ok) {
-                window.dispatchEvent(new Event('auth-change'));
-                router.push('/dashboard/user');
-            } else {
-                const data = await res.json();
-                setError(data.message || 'Something went wrong. Please try again.');
+            if (authError) {
+                setError(authError.message || 'Something went wrong. Please try again.');
                 setIsLoading(false);
+                return;
             }
-        } catch {
+
+            // Success: trigger global auth change event
+            window.dispatchEvent(new Event('auth-change'));
+            
+            // 7-second auto-redirect sequence to the Learning Hub
+            setTimeout(() => {
+                router.push('/learning');
+            }, 7000);
+
+            // Give immediate feedback to user that it was successful but they will be redirected
+            // We can repurpose the error state as a success message block if we want, but typically 
+            // the UI will show a success state or just stay disabled until redirect.
+            
+        } catch (err) {
             setError('Network error. Please check your connection.');
             setIsLoading(false);
         }

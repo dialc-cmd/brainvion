@@ -16,6 +16,7 @@ import { X, CheckCircle2, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TECH_SERVICES } from '@/data/services';
 import type { ServiceSlug, AppointmentPayload } from '@/lib/types';
+import { supabase } from '@/lib/supabase';
 
 // Community REQUIREMENT [Brainvion]: [High-conversion lead capture modal with real-time contextual service pre-selection from the clicked gig card.]
 // TECHNICAL IMPLEMENTATION: [3-state machine (form → submitting → success). Pre-fills <select> via activeService prop. 7s useEffect timer auto-redirects to /learning on success. Cleanup prevents memory leaks.]
@@ -148,19 +149,23 @@ export default function AppointmentModal({
 
             // Simulate network latency for realistic UX feedback.
             // When a backend is ready, replace this with an actual API call.
-            const payload: AppointmentPayload = {
-                fullName: fullName.trim(),
-                email: email.trim(),
-                phone: phone.trim(),
-                selectedService: selectedService as ServiceSlug,
+            const submitAppointment = async () => {
+                const { error: insertError } = await supabase.from('appointments').insert({
+                    full_name: fullName.trim(),
+                    email: email.trim(),
+                    phone_no: phone.trim(),
+                    selected_service: selectedService
+                });
+
+                if (insertError) {
+                    console.error('[BrainVION] Appointment error:', insertError);
+                    setView('form');
+                    setErrors({ selectedService: 'Failed to submit appointment. Please try again.' });
+                } else {
+                    setView('success');
+                }
             };
-
-            // eslint-disable-next-line no-console
-            console.log('[BrainVION] Appointment payload:', payload);
-
-            setTimeout(() => {
-                setView('success');
-            }, 800);
+            submitAppointment();
         },
         [validate, fullName, email, phone, selectedService]
     );

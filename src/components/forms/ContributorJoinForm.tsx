@@ -29,8 +29,10 @@ function Field({ label, name, type = 'text', placeholder, required }: { label: s
 }
 
 // 1. Context: This form exists exclusively for builders (developers, writers, student ambassadors) joining the BrainVION ecosystem via the /community page. Clients/customers use /signup instead.
-// 2. Algorithm/Logic: Collects contributor-specific data including contributionArea and optional portfolioUrl. POSTs to /api/join with implicit role='contributor'. Sets brainvion_role cookie for client-side routing on success.
+// 2. Algorithm/Logic: Collects contributor-specific data including contributionArea and optional portfolioUrl. Inserts directly to Supabase via RLS.
 // 3. Junior Engineer Guidance: Successful contributor submissions route to /dashboard/community. Never route contributors to /dashboard/user — that is the client transactional dashboard.
+import { supabase } from '@/lib/supabase';
+
 export default function ContributorJoinForm({ onClose }: { onClose: () => void }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
@@ -39,20 +41,22 @@ export default function ContributorJoinForm({ onClose }: { onClose: () => void }
         e.preventDefault();
         setIsLoading(true);
         const formData = new FormData(e.currentTarget);
-        const data = Object.fromEntries(formData.entries());
-
+        
         try {
-            const res = await fetch('/api/join', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+            const { error } = await supabase.from('contributors').insert({
+                full_name: formData.get('name') as string,
+                email: formData.get('email') as string,
+                portfolio_url: formData.get('portfolioUrl') as string || null,
+                contribution_area: formData.get('contributionArea') as string,
+                home_country: formData.get('homeCountry') as string
             });
-            if (res.ok) {
+
+            if (!error) {
                 Cookies.set('brainvion_role', 'contributor', { expires: 7 });
                 window.dispatchEvent(new Event('auth-change'));
                 router.push('/dashboard/community');
             } else {
-                alert('Something went wrong. Email may already be in use.');
+                alert(`Error: ${error.message || 'Something went wrong. Email may already be in use.'}`);
                 setIsLoading(false);
             }
         } catch (error) {
