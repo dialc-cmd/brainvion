@@ -2,6 +2,11 @@
   <img src="public/logo/logo.png" alt="BrainVION Logo" width="200" />
   <h1>BrainVION</h1>
   <p><strong>A student tech community connecting learners, developers, and future innovators.</strong></p>
+
+  <p>
+    <a href="https://github.com/dialc-cmd/brainvion/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-ISC-blue.svg" alt="License: ISC" /></a>
+    <a href="https://github.com/dialc-cmd/brainvion/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
+  </p>
 </div>
 
 ---
@@ -15,37 +20,102 @@ BrainVION is a community-driven platform engineered specifically for university 
 
 Every commit merged into `main` must reflect elite, Silicon Valley-level engineering rigor.
 
+## ✨ Features
+
+- **AI-Powered Learning Hub:** Integrated with Langchain to provide intelligent learning assistance and Retrieval-Augmented Generation (RAG) capabilities.
+- **Interactive Code Environment:** Embedded Monaco Editor allowing users to write and test code snippets directly within the platform.
+- **Robust Backend & Database:** Utilizes Prisma ORM for seamless database interactions and Supabase for backend services and authentication.
+- **Offline Capability:** Native Service Worker (`sw.js`) integration for full offline accessibility, ensuring learners can access materials anytime.
+- **Responsive UI:** Built with Tailwind CSS utilizing golden ratio responsive spacing for a premium visual experience.
+
 ## 🛠 Technology Stack
 
 This MVP enforces strict international engineering principles utilizing a modern, rapid-deployment stack:
-- **Framework:** Next.js (Pages Router)
-- **Language:** 100% Strict TypeScript (No `any` allowed).
-- **Styling:** Tailwind CSS v4 (Golden Ratio responsive spacing).
-- **PWA Integration:** Native Service Worker (`sw.js`) for full offline capability.
-- **Hosting / Deployment:** Vercel (Zero-cost tier).
-- **CMS / Data:** Static generation (with future scaling to Notion/Markdown) and Google Forms.
+- **Framework:** [Next.js](https://nextjs.org/) (React Framework)
+- **Language:** 100% Strict [TypeScript](https://www.typescriptlang.org/) (No `any` allowed)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) (Golden Ratio responsive spacing)
+- **AI Integration:** [Langchain](https://js.langchain.com/docs/) & [OpenAI](https://openai.com/)
+- **Code Editor:** [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+- **Database ORM:** [Prisma](https://www.prisma.io/)
+- **Backend as a Service:** [Supabase](https://supabase.com/)
+- **PWA Integration:** Native Service Worker (`sw.js`) for full offline capability
+- **Hosting / Deployment:** Vercel (Zero-cost tier)
+
+## 📁 Project Structure
+
+```
+brainvion/
+├── .agents/              # Agent instructions
+├── docs/                 # Documentation
+├── prisma/               # Prisma schema and database configuration
+│   ├── dev.db            # SQLite database for local development
+│   └── schema.prisma     # Prisma schema file
+├── public/               # Static assets (images, logos, etc.)
+├── src/                  # Source code for the Next.js application
+│   ├── app/              # Next.js app directory
+│   ├── components/       # Reusable React components
+│   ├── data/             # Static data files
+│   ├── hooks/            # Custom React hooks
+│   ├── lib/              # Utility functions and shared libraries
+│   ├── pages/            # Next.js pages directory (if applicable)
+│   ├── styles/           # Global CSS and Tailwind styles
+│   ├── middleware.ts     # Next.js middleware
+│   └── README.md         # Source code specific readme
+├── supabase/             # Supabase configuration and edge functions
+│   ├── config.toml       # Supabase configuration file
+│   ├── functions/        # Edge functions
+│   └── migrations/       # Database migrations
+├── .env.example          # Example environment variables
+├── CONTRIBUTING.md       # Contribution guidelines
+├── CODE_OF_CONDUCT.md    # Code of conduct
+├── SECURITY.md           # Security policies
+├── LICENSE               # License information
+├── package.json          # Project dependencies and scripts
+└── README.md             # Project documentation (this file)
+```
 
 ## ⚙️ Local Development
 
 ### Prerequisites
-- Node.js (v18+ recommended)
+- [Node.js](https://nodejs.org/) (v18+ recommended)
 - npm
 
-### Installation
-1. Clone the repository:
+### Installation & Setup
+
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/dialc-cmd/brainvion.git
    cd brainvion
    ```
-2. Install dependencies:
+
+2. **Install dependencies:**
    ```bash
    npm install
    ```
-3. Run the development server:
+
+3. **Environment Variables:**
+   Copy the `.env.example` file to `.env.local` and fill in the required values:
+   ```bash
+   cp .env.example .env.local
+   ```
+   *Note: Ensure you have the necessary API keys (OpenAI, Supabase, etc.) configured in your `.env.local` file.*
+
+4. **Database Setup (Prisma):**
+   Run the Prisma generate command to generate the Prisma Client:
+   ```bash
+   npx prisma generate
+   ```
+   Push the schema to your local database:
+   ```bash
+   npx prisma db push
+   ```
+
+5. **Run the development server:**
    ```bash
    npm run dev
    ```
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🏛️ Silicon Valley QA/QC Engineering Standards
 
@@ -69,8 +139,18 @@ The BrainVION knowledge base is strictly architected for AI crawlers (LLMs, Answ
 - **Semantic Components:** Use exported `SemanticTable` and `SemanticList` to construct non-disruptive, highly parseable data representations.
 - **Automated Schemas:** JSON-LD schemas (WebSite, Organization, Article, FAQPage) are centrally managed in `src/lib/seo/schemas.ts` and injected dynamically.
 
-## 📜 Intellectual Property
+## 🤝 Contributing
+
+We welcome contributions from university students, interns, and developers looking to build real-world engineering skills. Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our strict architectural guidelines and the process for submitting pull requests.
+
+Please also adhere to our [CODE OF CONDUCT](./CODE_OF_CONDUCT.md) in all your interactions with the project.
+
+For security-related issues, please refer to our [SECURITY.md](./SECURITY.md).
+
+## 📜 Intellectual Property & License
 
 This repository and its foundational architecture are the exclusive intellectual property of **Brainvion** and Founder **Dial Chowdhury Emon** (@dialc.official, GitHub: dialc-cmd). 
 
 Unauthorized copying, modification, or distribution is strictly prohibited outside of authorized community contributions.
+
+See the [LICENSE](./LICENSE) file for more details.
