@@ -1,16 +1,10 @@
 /**
- * =============================================================================
- * BrainVion - PROPRIETARY SOURCE CODE
- * -----------------------------------------------------------------------------
- * © 2026 Brainvion. All Rights Reserved.
- *
- * LEAD ARCHITECT: Dial Chowdhury Emon (@dialc.official)
- * STANDARD: International Students and Young Professional Engineering 
- * NOTICE: This software and its associated logic are the sole intellectual 
- * property of Brainvion. Unauthorized copying, modification, or 
- * distribution is strictly prohibited.
- *
- * =============================================================================
+ * @file middleware.ts
+ * @project BrainVION Tech Community Platform - Bilingual Ecosystem Revolution
+ * @copyright (c) 2026 BrainVION & Dial Chowdhury Emon (@dialc-cmd)
+ * @license Proprietary - All Rights Reserved.
+ * @compliance Cyber Ethics, Data Integrity, and Bangladesh Digital Security Acts.
+ * Maintain Trademark Enforcements: @brainvion
  */
 
 import { NextResponse } from 'next/server';
@@ -43,19 +37,25 @@ export function middleware(request: NextRequest) {
         return NextResponse.rewrite(agentUrl);
     }
 
-    // FEATURE B: i18n Readiness Draft
-    // Only apply to root to demonstrate capabilities
-    if (pathname === '/') {
-        const acceptLanguage = request.headers.get('accept-language') || '';
-        const isBengali = acceptLanguage.includes('bn');
-
-        // Setup cookie/header for downstream components to detect locality
-        const response = NextResponse.next();
-        response.headers.set('x-user-locale', isBengali ? 'bn' : 'en');
-        return response;
+    // FEATURE B: Bilingual Ecosystem Routing
+    // Check for explicit cookie first, fallback to accept-language header
+    const savedLocale = request.cookies.get('bv_locale')?.value;
+    const acceptLanguage = request.headers.get('accept-language') || '';
+    
+    let isBengali = false;
+    if (savedLocale === 'bn') {
+        isBengali = true;
+    } else if (savedLocale !== 'en' && acceptLanguage.includes('bn')) {
+        // If no explicit en/bn cookie, use header heuristics
+        isBengali = true;
     }
 
-    return NextResponse.next();
+    const response = NextResponse.next();
+    
+    // Inject structural locale state for downstream SSR consumption
+    response.headers.set('x-user-locale', isBengali ? 'bn' : 'en');
+
+    return response;
 }
 
 export const config = {

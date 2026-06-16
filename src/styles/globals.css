@@ -5,9 +5,18 @@
   --color-accent: #00E5FF;
   --color-secondary: #F5F7FA;
   --color-text: #222222;
+  --color-bangla-accent: #FF6B35;
 
   --font-heading: Inter, Poppins, sans-serif;
   --font-body: Inter, sans-serif;
+  --font-bangla-heading: "Hind Siliguri", sans-serif;
+  --font-bangla-body: "Noto Sans Bengali", sans-serif;
+
+  --spacing-phi-1: 1.618rem;
+  --spacing-phi-2: 2.618rem;
+  --spacing-phi-3: 4.236rem;
+  --spacing-phi-4: 6.854rem;
+  --spacing-phi-5: 11.09rem;
 }
 
 body {
@@ -18,4 +27,54 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
+}
+
+.font-bangla-heading {
+  font-family: var(--font-bangla-heading);
+  line-height: 1.25;
+}
+
+.font-bangla-body {
+  font-family: var(--font-bangla-body);
+  line-height: 1.35;
+}
+
+.phi-padding-card {
+  padding: var(--spacing-phi-2);
+}
+
+.phi-padding-btn {
+  padding: 0.809rem var(--spacing-phi-1); /* 0.809 is approx phi / 2 */
+}
+
+.btn-glow {
+  box-shadow: 0 0 15px -3px rgba(0, 229, 255, 0.4);
+  transition: box-shadow 0.3s ease-out;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 25px 0px rgba(0, 229, 255, 0.6);
+}
+
+.bilingual-bridge {
+  padding-top: var(--spacing-phi-2);
+  padding-bottom: var(--spacing-phi-2);
+}
+
+.video-text-overlay {
+  position: relative;
+}
+
+.video-text-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 37, 64, 0.9), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.video-text-overlay > * {
+  position: relative;
+  z-index: 1;
 }

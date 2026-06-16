@@ -1,12 +1,26 @@
-const CACHE_NAME = 'brainvion-cache-v1';
+/**
+ * @file sw.js
+ * @project BrainVION Tech Community Platform - Lean Architecture Update
+ * @copyright (c) 2026 BrainVION & Dial Chowdhury Emon (@dialc-cmd)
+ * @license Proprietary - All Rights Reserved.
+ */
+
+// 1. Context: Lightweight service worker for PWA offline capability and precaching of critical routes.
+// 2. Algorithm/Logic: Precaches the core navigation shell on install. Uses a stale-while-revalidate strategy for runtime fetches with an offline fallback for navigation requests.
+// 3. Junior Engineer Guidance: When adding a new page route, add it to urlsToCache below. Never cache API routes or dynamic data endpoints here.
+
+const CACHE_NAME = 'brainvion-cache-v2';
 const OFFLINE_URL = '/learning';
 
 const urlsToCache = [
     '/',
     '/community',
+    '/services',
     '/learning',
-    '/house',
     '/contact',
+    '/login',
+    '/signup',
+    '/store',
     '/manifest.json',
     '/logo/logo.png',
     '/icons/icon-192x192.png',

@@ -31,7 +31,7 @@ export default function CheckoutPage() {
         // Simulate Payment Gateway (SSLCommerz/Stripe) processing
         setTimeout(() => {
             alert("Payment Successful! Digital Book added to your Identity Hub.");
-            router.push('/dashboard/profile');
+            router.push('/');
         }, 2000);
     };
 

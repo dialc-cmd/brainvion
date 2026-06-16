@@ -37,6 +37,14 @@ export const TYPOGRAPHY = {
     small: 'text-sm leading-normal',
 };
 
+export const BANGLA_TYPOGRAPHY = {
+    h1: 'font-bangla-heading text-4xl md:text-5xl lg:text-7xl font-bold leading-tight',
+    h2: 'font-bangla-heading text-3xl md:text-4xl font-bold leading-tight',
+    h3: 'font-bangla-heading text-2xl md:text-3xl font-semibold',
+    body: 'font-bangla-body text-base md:text-lg leading-relaxed',
+    small: 'font-bangla-body text-sm leading-normal',
+};
+
 // Application standard links
 export const LINKS = {
     form: 'https://docs.google.com/forms/d/e/1FAIpQLScX...', // Placeholder

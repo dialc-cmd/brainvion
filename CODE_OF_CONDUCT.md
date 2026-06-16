@@ -50,7 +50,7 @@ If a participant violates these rules, maintainers may take actions including:
 
 If you experience or witness unacceptable behavior, please report it privately to the maintainers.
 
-Contact: brainvion.community@gmail.com
+Contact: [EMAIL_ADDRESS]
 
 All reports will be reviewed and handled respectfully and confidentially.
 

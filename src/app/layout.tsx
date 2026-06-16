@@ -15,6 +15,8 @@
 
 import { Inter, Poppins } from "next/font/google";
 import "@/styles/globals.css";
+import { SchemaInjector } from "@/components/seo/SchemaInjector";
+import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/seo/schemas";
 
 // Load fonts via Next.js Font Optimization to maintain <1s load times
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -25,8 +27,8 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-    title: "BrainVION Interactive Labs",
-    description: "Welcome to the BrainVION Global Network. Experience Agentic Tutoring and Immersive Labs.",
+    title: "BrainVION Global Network",
+    description: "Welcome to the BrainVION Global Network.",
 };
 
 export default function RootLayout({
@@ -40,11 +42,12 @@ export default function RootLayout({
             <head>
                 {/* Prevent the existing Pages router globals from conflicting if needed, 
                     but we import globals.css above for Tailwind v4 processing */}
+                <SchemaInjector schema={[generateOrganizationSchema(), generateWebSiteSchema()]} />
             </head>
             <body className="bg-secondary text-text antialiased font-sans">
                 {/* 
                  * Note: NavBar and Footer from the Pages router are NOT injected here 
-                 * by default to keep the App Router (Labs/Spatial UI) completely distinct
+                 * by default to keep the App Router completely distinct
                  * and lightweight as an "App-like" experience.
                  */}
                 {children}

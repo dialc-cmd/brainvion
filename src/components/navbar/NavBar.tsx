@@ -15,32 +15,52 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { Menu, X, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import AnimatedLogo from './AnimatedLogo';
+import Cookies from 'js-cookie';
 
-// Community REQUIREMENT [Brainvion]: [Users need simple, mobile-first navigation across the 5 core pages with premium silicon-valley micro-interactions.]
-// TECHNICAL IMPLEMENTATION: [Next/Link used for routing. Framer Motion used for the shared layout ID active link indicator and smooth mobile menu expansion.]
+// Community REQUIREMENT [Brainvion]: [Users need simple, mobile-first navigation across the 5 core pages with premium silicon-valley micro-interactions. Includes auth state.]
+// TECHNICAL IMPLEMENTATION: [Next/Link used for routing. Framer Motion used for the shared layout ID active link indicator and smooth mobile menu expansion. Client-side cookie check for mock auth state.]
 // QA/QC ADVISORY: [Ensure mobile layout doesn't overlap on very narrow viewports and animations do not cause horizontal scrolling.]
 
 const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Community', path: '/community' },
+    { name: 'Services', path: '/services' },
     { name: 'Learning Hub', path: '/learning' },
-    { name: 'Student House', path: '/house' },
-    { name: 'Agentic Labs', path: '/register' },
+    { name: 'Store', path: '/store' },
     { name: 'Contact', path: '/contact' },
-];
-
-const authItems = [
-    { name: 'Sign In', path: '/login' },
 ];
 
 export default function NavBar() {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [userRole, setUserRole] = useState<string | null>(null);
+
+    // Mock authentication check
+    useEffect(() => {
+        const checkAuth = () => {
+            const role = Cookies.get('brainvion_role');
+            setUserRole(role || null);
+        };
+        checkAuth();
+        // Listen for custom event if we want cross-tab sync in MVP, or just rely on router changes
+        window.addEventListener('auth-change', checkAuth);
+        return () => window.removeEventListener('auth-change', checkAuth);
+    }, [router.pathname]); // Re-check on navigation
+
+    const handleSignOut = () => {
+        Cookies.remove('brainvion_role');
+        setUserRole(null);
+        window.dispatchEvent(new Event('auth-change'));
+        router.push('/');
+    };
+
+    const dashboardLink = userRole === 'contributor' ? '/dashboard/community' : '/dashboard/user';
 
     return (
         <nav className="sticky top-0 z-50 w-full bg-secondary/70 backdrop-blur-lg border-b border-gray-200/50 shadow-sm transition-all duration-300">
@@ -59,8 +79,8 @@ export default function NavBar() {
                     </motion.div>
 
                     {/* Desktop Nav */}
-                    <div className="hidden md:flex md:items-center md:space-x-8">
-                        {navItems.map((item, i) => {
+                    <div className="hidden md:flex md:items-center md:space-x-6 lg:space-x-8">
+                        {navItems.map((item) => {
                             const isActive = router.pathname === item.path;
                             return (
                                 <Link
@@ -83,25 +103,62 @@ export default function NavBar() {
                                 </Link>
                             )
                         })}
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Link
-                                href="/login"
-                                className="text-sm font-semibold text-text/70 hover:text-primary border border-gray-200 hover:border-primary/30 px-5 py-2.5 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                            >
-                                Sign In
-                            </Link>
-                        </motion.div>
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <Link
-                                href="/apply"
-                                className="bg-primary hover:bg-primary/90 text-secondary px-6 py-2.5 rounded-lg text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-md hover:shadow-lg"
-                            >
-                                Apply Now
-                            </Link>
-                        </motion.div>
+
+                        {/* Auth / Profile Area */}
+                        <div className="flex items-center space-x-4 pl-4 border-l border-gray-200">
+                            {userRole ? (
+                                <div className="relative">
+                                    <button 
+                                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                        className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                                    >
+                                        <User className="w-5 h-5" />
+                                    </button>
+
+                                    <AnimatePresence>
+                                        {isProfileOpen && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="absolute right-0 mt-2 w-48 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 overflow-hidden origin-top-right"
+                                            >
+                                                <div className="py-1">
+                                                    <Link 
+                                                        href={dashboardLink}
+                                                        onClick={() => setIsProfileOpen(false)}
+                                                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                                                    >
+                                                        <LayoutDashboard className="w-4 h-4 mr-3" />
+                                                        Dashboard
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => {
+                                                            setIsProfileOpen(false);
+                                                            handleSignOut();
+                                                        }}
+                                                        className="flex w-full items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                                                    >
+                                                        <LogOut className="w-4 h-4 mr-3" />
+                                                        Sign Out
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ) : (
+                                <>
+                                    <Link href="/login" className="text-sm font-semibold text-text hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-accent rounded px-2 py-1">
+                                        Sign In
+                                    </Link>
+                                    <Link href="/signup" className="bg-primary hover:bg-primary/90 text-secondary px-5 py-2 rounded-lg text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm hover:shadow-md">
+                                        Sign Up
+                                    </Link>
+                                </>
+                            )}
+                        </div>
                     </div>
 
                     {/* Mobile menu button */}
@@ -143,13 +200,46 @@ export default function NavBar() {
                             </Link>
                         )
                     })}
-                    <Link
-                        href="/apply"
-                        onClick={() => setIsOpen(false)}
-                        className="block w-full text-center mt-6 bg-primary text-secondary px-5 py-3.5 rounded-lg text-base font-semibold hover:bg-primary/90 shadow-sm active:scale-95 transition-all"
-                    >
-                        Apply via Google Form
-                    </Link>
+                    
+                    <div className="pt-4 border-t border-gray-100 mt-2">
+                        {userRole ? (
+                            <>
+                                <Link
+                                    href={dashboardLink}
+                                    onClick={() => setIsOpen(false)}
+                                    className="block px-4 py-3 rounded-lg text-base font-medium text-text/80 hover:bg-gray-50 hover:text-primary border-l-4 border-transparent transition-colors"
+                                >
+                                    Dashboard
+                                </Link>
+                                <button
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        handleSignOut();
+                                    }}
+                                    className="block w-full text-left px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 border-l-4 border-transparent transition-colors"
+                                >
+                                    Sign Out
+                                </button>
+                            </>
+                        ) : (
+                            <div className="flex flex-col space-y-3 mt-4">
+                                <Link
+                                    href="/login"
+                                    onClick={() => setIsOpen(false)}
+                                    className="block w-full text-center bg-gray-100 text-primary px-5 py-3 rounded-lg text-base font-semibold hover:bg-gray-200 transition-all"
+                                >
+                                    Sign In
+                                </Link>
+                                <Link
+                                    href="/signup"
+                                    onClick={() => setIsOpen(false)}
+                                    className="block w-full text-center bg-primary text-secondary px-5 py-3 rounded-lg text-base font-semibold hover:bg-primary/90 shadow-sm active:scale-95 transition-all"
+                                >
+                                    Sign Up
+                                </Link>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </motion.div>
         </nav>

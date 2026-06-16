@@ -1,25 +1,20 @@
 /**
- * =============================================================================
- * BrainVion - PROPRIETARY SOURCE CODE
- * -----------------------------------------------------------------------------
- * © 2026 Brainvion. All Rights Reserved.
- *
- * LEAD ARCHITECT: Dial Chowdhury Emon (@dialc.official)
- * STANDARD: International Students and Young Professional Engineering 
- * NOTICE: This software and its associated logic are the sole intellectual 
- * property of Brainvion. Unauthorized copying, modification, or 
- * distribution is strictly prohibited.
- *
- * =============================================================================
+ * @file Footer.tsx
+ * @project BrainVION Tech Community Platform - Bilingual Ecosystem Revolution
+ * @copyright (c) 2026 BrainVION & Dial Chowdhury Emon (@dialc-cmd)
+ * @license Proprietary - All Rights Reserved.
+ * @compliance Cyber Ethics, Data Integrity, and Bangladesh Digital Security Acts.
+ * Maintain Trademark Enforcements: @brainvion
  */
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { LINKS } from '@/lib/constants';
 import { Facebook, MessageCircle, Mail } from 'lucide-react';
 
-// Community REQUIREMENT [Brainvion]: [A footer summarizing the community and linking to social/apply actions.]
-// TECHNICAL IMPLEMENTATION: [Standard semantic footer setup utilizing Tailwind flex grids.]
-// QA/QC ADVISORY: [Verify link accessibility and visual contrast against the dark minimal background.]
+// 1. Context: Serves as the global footer across the entire application to anchor the UX.
+// 2. Algorithm/Logic: Uses standard Tailwind responsive grid layouts. Implements `next/image` to prevent CLS (Cumulative Layout Shift) and ensure sub-2-second renders.
+// 3. Junior Engineer Guidance: Do not revert the `Image` component back to a standard `<img>` tag. Doing so will violate Vercel's performance optimization routing.
 
 export default function Footer() {
     const year = new Date().getFullYear();
@@ -32,7 +27,13 @@ export default function Footer() {
                     {/* Brand & Vision */}
                     <div className="space-y-4">
                         <div className="bg-white/95 p-2 rounded-lg inline-block w-fit">
-                            <img src="/logo/logo.png" alt="BrainVION Logo" className="h-8 md:h-10 w-auto object-contain drop-shadow-sm" />
+                            <Image 
+                                src="/logo/logo.png" 
+                                alt="BrainVION Logo" 
+                                width={160} 
+                                height={40} 
+                                className="h-8 md:h-10 w-auto object-contain drop-shadow-sm" 
+                            />
                         </div>
                         <p className="text-sm text-secondary/80 max-w-xs leading-relaxed">
                             A student tech community connecting learners, university students, and future remote workers.
@@ -51,11 +52,6 @@ export default function Footer() {
                             <li>
                                 <Link href="/learning" className="hover:text-accent transition-colors">
                                     Learning Hub
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/house" className="hover:text-accent transition-colors">
-                                    Student House
                                 </Link>
                             </li>
                             <li>

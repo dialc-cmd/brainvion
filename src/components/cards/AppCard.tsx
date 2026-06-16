@@ -1,16 +1,10 @@
 /**
- * =============================================================================
- * BrainVion - PROPRIETARY SOURCE CODE
- * -----------------------------------------------------------------------------
- * © 2026 Brainvion. All Rights Reserved.
- *
- * LEAD ARCHITECT: Dial Chowdhury Emon (@dialc.official)
- * STANDARD: International Students and Young Professional Engineering 
- * NOTICE: This software and its associated logic are the sole intellectual 
- * property of Brainvion. Unauthorized copying, modification, or 
- * distribution is strictly prohibited.
- *
- * =============================================================================
+ * @file AppCard.tsx
+ * @project BrainVION Tech Community Platform - Bilingual Ecosystem Revolution
+ * @copyright (c) 2026 BrainVION & Dial Chowdhury Emon (@dialc-cmd)
+ * @license Proprietary - All Rights Reserved.
+ * @compliance Cyber Ethics, Data Integrity, and Bangladesh Digital Security Acts.
+ * Maintain Trademark Enforcements: @brainvion
  */
 
 'use client';
@@ -19,9 +13,9 @@ import { ReactNode, MouseEvent } from 'react';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-// Community REQUIREMENT [Brainvion]: [Highlight key tech/student topics with minimal, clean card aesthetics inspired by Stripe/Linear.]
-// TECHNICAL IMPLEMENTATION: [Reusable functional component taking title, description, and optional icon for rapid prototyping and consistent UI mapping.]
-// QA/QC ADVISORY: [Ensure padding and grid flow perfectly at lower viewpoints to avoid cramping.]
+// 1. Context: A highly reusable minimal card component inspired by modern Linear aesthetics.
+// 2. Algorithm/Logic: Framer Motion state tracking calculates the exact mouse XY to render an interactive radial spotlight gradient.
+// 3. Junior Engineer Guidance: Spacing strictly adheres to the Golden Ratio (p-6/24px) for harmonious visual scaling. Do not introduce arbitrary padding or margins.
 
 interface AppCardProps {
     title: string;
